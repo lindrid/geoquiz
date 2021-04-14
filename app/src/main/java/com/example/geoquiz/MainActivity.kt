@@ -34,15 +34,15 @@ class MainActivity : AppCompatActivity() {
     nextButton        = findViewById(R.id.next_button)
     questionTextView  = findViewById(R.id.text_view)
 
-    trueButton.setOnClickListener { _: View ->
+    trueButton.setOnClickListener {
       checkAnswer(true)
     }
 
-    falseButton.setOnClickListener { _: View ->
+    falseButton.setOnClickListener {
       checkAnswer(false)
     }
 
-    nextButton.setOnClickListener{_: View ->
+    nextButton.setOnClickListener{
       currentIndex = (currentIndex + 1) % questionBank.size
       updateQuestion()
     }

@@ -5,14 +5,18 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+
+import kotlin.math.abs
 
 class MainActivity : AppCompatActivity() {
 
   private lateinit var trueButton: Button
   private lateinit var falseButton: Button
-  private lateinit var nextButton: Button
+  private lateinit var nextButton: ImageButton
+  private lateinit var prevButton: ImageButton
   private lateinit var questionTextView: TextView
 
   private val questionBank = listOf(
@@ -32,17 +36,32 @@ class MainActivity : AppCompatActivity() {
     trueButton        = findViewById(R.id.true_button)
     falseButton       = findViewById(R.id.false_button)
     nextButton        = findViewById(R.id.next_button)
+    prevButton        = findViewById(R.id.prev_button)
     questionTextView  = findViewById(R.id.text_view)
 
-    trueButton.setOnClickListener { _: View ->
+    trueButton.setOnClickListener {
       checkAnswer(true)
     }
 
-    falseButton.setOnClickListener { _: View ->
+    falseButton.setOnClickListener {
       checkAnswer(false)
     }
 
-    nextButton.setOnClickListener{_: View ->
+    prevButton.setOnClickListener {
+      currentIndex = if (currentIndex == 0) {
+        questionBank.size - 1
+      } else {
+        ((currentIndex - 1)) % questionBank.size
+      }
+      updateQuestion()
+    }
+
+    nextButton.setOnClickListener {
+      currentIndex = (currentIndex + 1) % questionBank.size
+      updateQuestion()
+    }
+
+    questionTextView.setOnClickListener {
       currentIndex = (currentIndex + 1) % questionBank.size
       updateQuestion()
     }
@@ -59,8 +78,7 @@ class MainActivity : AppCompatActivity() {
 
     val resId = if (answer == correctAnswer) {
       R.string.correct_toast
-    }
-    else {
+    } else {
       R.string.incorrect_toast
     }
 

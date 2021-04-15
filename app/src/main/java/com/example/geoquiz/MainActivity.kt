@@ -2,11 +2,14 @@ package com.example.geoquiz
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log.d
 import android.view.Gravity
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+
+const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,12 +30,13 @@ class MainActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    d(TAG, "onCreate()")
     setContentView(R.layout.activity_main)
 
     trueButton        = findViewById(R.id.true_button)
     falseButton       = findViewById(R.id.false_button)
     nextButton        = findViewById(R.id.next_button)
-    questionTextView  = findViewById(R.id.text_view)
+    questionTextView  = findViewById(R.id.question_text_view)
 
     trueButton.setOnClickListener {
       checkAnswer(true)
@@ -65,5 +69,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    d(TAG, "onDestroy()")
+  }
+
+  override fun onStart() {
+    super.onStart()
+    d(TAG, "onStart()")
+  }
+
+  override fun onStop() {
+    super.onStop()
+    d(TAG, "onStop()")
+  }
+
+  override fun onResume() {
+    super.onResume()
+    d(TAG, "onResume()")
+  }
+
+  override fun onPause() {
+    super.onPause()
+    d(TAG, "onPause()")
   }
 }

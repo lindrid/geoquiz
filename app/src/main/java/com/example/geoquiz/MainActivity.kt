@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
   private lateinit var falseButton: Button
   private lateinit var nextButton: Button
   private lateinit var questionTextView: TextView
+  private var successAnswers = 0f
 
   private val questionBank = listOf(
     Question(R.string.question_australia, true),
@@ -63,9 +64,10 @@ class MainActivity : AppCompatActivity() {
   }
 
   private fun checkAnswer (answer: Boolean) {
-    val correctAnswer = questionBank[currentIndex].answer
+   val correctAnswer = questionBank[currentIndex].answer
 
     val resId = if (answer == correctAnswer) {
+      successAnswers++
       R.string.correct_toast
     }
     else {
@@ -73,6 +75,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()
+
+    if (currentIndex == questionBank.size - 1) {
+      val percent: Float = successAnswers / questionBank.size
+      Toast.makeText(this, getString(R.string.success_percent, (percent * 100).toInt()),
+        Toast.LENGTH_SHORT).show()
+      successAnswers = 0f
+    }
   }
 
   override fun onDestroy() {

@@ -40,15 +40,19 @@ class MainActivity : AppCompatActivity() {
 
     trueButton.setOnClickListener {
       checkAnswer(true)
+      falseButton.isEnabled = false
     }
 
     falseButton.setOnClickListener {
       checkAnswer(false)
+      trueButton.isEnabled = false
     }
 
     nextButton.setOnClickListener{
       currentIndex = (currentIndex + 1) % questionBank.size
       updateQuestion()
+      trueButton.isEnabled = true
+      falseButton.isEnabled = true
     }
 
     updateQuestion()

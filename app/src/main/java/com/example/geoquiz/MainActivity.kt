@@ -2,36 +2,37 @@ package com.example.geoquiz
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.util.Log.d
 import android.view.Gravity
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 
-const val TAG = "MainActivity"
+private const val TAG = "MainActivity"
+private const val KEY_INDEX = "index"
 
 class MainActivity : AppCompatActivity() {
-
   private lateinit var trueButton: Button
   private lateinit var falseButton: Button
   private lateinit var nextButton: Button
   private lateinit var questionTextView: TextView
 
-  private val questionBank = listOf(
-    Question(R.string.question_australia, true),
-    Question(R.string.question_oceans,    true),
-    Question(R.string.question_mideast,   false),
-    Question(R.string.question_africa,    false),
-    Question(R.string.question_americas,  true),
-    Question(R.string.question_asia,      true)
-  )
-  private var currentIndex = 0
+  private val quizViewModel: QuizViewModel by lazy {
+    ViewModelProvider(this).get(QuizViewModel::class.java)
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     d(TAG, "onCreate()")
     setContentView(R.layout.activity_main)
+
+    d(TAG, "Got a QuizViewModel: $quizViewModel")
+
+    quizViewModel.currentIndex = savedInstanceState?.getInt(KEY_INDEX, 0) ?: 0
 
     trueButton        = findViewById(R.id.true_button)
     falseButton       = findViewById(R.id.false_button)
@@ -47,7 +48,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     nextButton.setOnClickListener{
-      currentIndex = (currentIndex + 1) % questionBank.size
+      quizViewModel.moveToNext()
       updateQuestion()
     }
 
@@ -55,11 +56,11 @@ class MainActivity : AppCompatActivity() {
   }
 
   private fun updateQuestion () {
-    questionTextView.setText(questionBank[currentIndex].textResId)
+    questionTextView.setText(quizViewModel.currentQuestionResId)
   }
 
   private fun checkAnswer (answer: Boolean) {
-    val correctAnswer = questionBank[currentIndex].answer
+    val correctAnswer = quizViewModel.currentQuestionAnswer
 
     val resId = if (answer == correctAnswer) {
       R.string.correct_toast
@@ -94,5 +95,11 @@ class MainActivity : AppCompatActivity() {
   override fun onPause() {
     super.onPause()
     d(TAG, "onPause()")
+  }
+
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    Log.i(TAG, "onSaveInstanceState")
+    outState.putInt(KEY_INDEX, quizViewModel.currentIndex)
   }
 }

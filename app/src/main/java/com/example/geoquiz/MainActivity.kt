@@ -4,13 +4,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.util.Log.d
-import android.view.Gravity
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 
 private const val TAG = "MainActivity"
 private const val KEY_INDEX = "index"
@@ -97,9 +94,9 @@ class MainActivity : AppCompatActivity() {
     d(TAG, "onPause()")
   }
 
-  override fun onSaveInstanceState(outState: Bundle) {
-    super.onSaveInstanceState(outState)
+  override fun onSaveInstanceState(savedInstanceState: Bundle) {
+    super.onSaveInstanceState(savedInstanceState)
     Log.i(TAG, "onSaveInstanceState")
-    outState.putInt(KEY_INDEX, quizViewModel.currentIndex)
+    savedInstanceState.putInt(KEY_INDEX, quizViewModel.currentIndex)
   }
 }

@@ -1,5 +1,6 @@
 package com.example.geoquiz
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -10,7 +11,6 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 
 private const val TAG = "MainActivity"
 private const val KEY_INDEX = "index"
@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
   private lateinit var falseButton: Button
   private lateinit var nextButton: Button
   private lateinit var questionTextView: TextView
+  private lateinit var cheatButton: Button
 
   private val quizViewModel: QuizViewModel by lazy {
     ViewModelProvider(this).get(QuizViewModel::class.java)
@@ -38,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     falseButton       = findViewById(R.id.false_button)
     nextButton        = findViewById(R.id.next_button)
     questionTextView  = findViewById(R.id.question_text_view)
+    cheatButton       = findViewById(R.id.cheat_button)
 
     trueButton.setOnClickListener {
       checkAnswer(true)
@@ -47,9 +49,14 @@ class MainActivity : AppCompatActivity() {
       checkAnswer(false)
     }
 
-    nextButton.setOnClickListener{
+    nextButton.setOnClickListener {
       quizViewModel.moveToNext()
       updateQuestion()
+    }
+
+    cheatButton.setOnClickListener {
+      val intent = CheatActivity.newIntent(this, quizViewModel.currentQuestionAnswer)
+      startActivity(intent)
     }
 
     updateQuestion()

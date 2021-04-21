@@ -1,5 +1,6 @@
 package com.example.geoquiz
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 
 private const val TAG = "MainActivity"
 private const val KEY_INDEX = "index"
+private const val REQUEST_CODE_CHEAT = 0
 
 class MainActivity : AppCompatActivity() {
   private lateinit var trueButton: Button
@@ -54,11 +56,27 @@ class MainActivity : AppCompatActivity() {
 
     cheatButton.setOnClickListener {
       val intent = CheatActivity.newIntent(this, quizViewModel.currentQuestionAnswer)
-      startActivity(intent)
+      startActivityForResult(intent, REQUEST_CODE_CHEAT)
     }
 
     updateQuestion()
   }
+
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+
+    if (resultCode != Activity.RESULT_OK) {
+      return
+    }
+
+    // проверка из какой дочерней активити пришли обратные данные
+    // в данном случае из CheatActivity
+    if (requestCode == REQUEST_CODE_CHEAT) {
+      quizViewModel.isCheater = data?.getBooleanExtra(ANSWER_SHOWN, false) ?: false
+    }
+  }
+
 
   private fun updateQuestion () {
     questionTextView.setText(quizViewModel.currentQuestionResId)
@@ -67,11 +85,10 @@ class MainActivity : AppCompatActivity() {
   private fun checkAnswer (answer: Boolean) {
     val correctAnswer = quizViewModel.currentQuestionAnswer
 
-    val resId = if (answer == correctAnswer) {
-      R.string.correct_toast
-    }
-    else {
-      R.string.incorrect_toast
+    val resId = when {
+      quizViewModel.isCheater -> R.string.judgement_toast
+      answer == correctAnswer -> R.string.correct_toast
+      else                    -> R.string.incorrect_toast
     }
 
     Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()

@@ -43,13 +43,24 @@ class MainActivity : AppCompatActivity() {
 
     trueButton.setOnClickListener {
       checkAnswer(true)
+      if (quizViewModel.isItLastQuestion) {
+        Toast.makeText(this, getString(R.string.cheat_count, quizViewModel.getCheatCount()),
+          Toast.LENGTH_SHORT).show()
+      }
     }
 
     falseButton.setOnClickListener {
       checkAnswer(false)
+      if (quizViewModel.isItLastQuestion) {
+        Toast.makeText(this, getString(R.string.cheat_count, quizViewModel.getCheatCount()),
+          Toast.LENGTH_SHORT).show()
+      }
     }
 
     nextButton.setOnClickListener {
+      if (quizViewModel.isItLastQuestion) {
+        quizViewModel.clearCheatStat()
+      }
       quizViewModel.moveToNext()
       updateQuestion()
     }
@@ -67,13 +78,16 @@ class MainActivity : AppCompatActivity() {
     super.onActivityResult(requestCode, resultCode, data)
 
     if (resultCode != Activity.RESULT_OK) {
+      d(TAG,"result is not ok")
       return
     }
 
     // проверка из какой дочерней активити пришли обратные данные
     // в данном случае из CheatActivity
     if (requestCode == REQUEST_CODE_CHEAT) {
-      quizViewModel.isCheater = data?.getBooleanExtra(ANSWER_SHOWN, false) ?: false
+      if (data?.getBooleanExtra(ANSWER_SHOWN, false) == true) {
+        quizViewModel.userIsCheatingOnThisQuestion()
+      }
     }
   }
 
@@ -86,9 +100,9 @@ class MainActivity : AppCompatActivity() {
     val correctAnswer = quizViewModel.currentQuestionAnswer
 
     val resId = when {
-      quizViewModel.isCheater -> R.string.judgement_toast
-      answer == correctAnswer -> R.string.correct_toast
-      else                    -> R.string.incorrect_toast
+      quizViewModel.userIsCheater() -> R.string.judgement_toast
+      answer == correctAnswer       -> R.string.correct_toast
+      else                          -> R.string.incorrect_toast
     }
 
     Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()

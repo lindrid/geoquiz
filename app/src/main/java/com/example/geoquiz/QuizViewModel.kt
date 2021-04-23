@@ -14,9 +14,12 @@ class QuizViewModel : ViewModel() {
     Question(R.string.question_americas,  true),
     Question(R.string.question_asia,      true)
   )
+  private val cheatArray = arrayOfNulls<Boolean>(6)
 
   var currentIndex = 0
-  var isCheater = false
+
+  var isItLastQuestion: Boolean = false
+    get() = (currentIndex == questionBank.size-1)
 
   val currentQuestionAnswer: Boolean
     get() = questionBank[currentIndex].answer
@@ -26,5 +29,27 @@ class QuizViewModel : ViewModel() {
 
   fun moveToNext() {
     currentIndex = (currentIndex + 1) % questionBank.size
+  }
+
+  fun userIsCheatingOnThisQuestion() {
+    cheatArray[currentIndex] = true
+  }
+
+  fun userIsCheater(): Boolean {
+    return cheatArray[currentIndex] ?: false
+  }
+
+  fun clearCheatStat() {
+    cheatArray.forEach { _ -> false }
+  }
+
+  fun getCheatCount(): Int {
+    var count = 0
+    cheatArray.forEach {
+      if (it == true) {
+        count++
+      }
+    }
+    return count
   }
 }

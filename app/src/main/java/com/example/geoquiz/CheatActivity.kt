@@ -9,42 +9,54 @@ import android.widget.Button
 import android.widget.TextView
 
 const val ANSWER_SHOWN = "com.example.geoquiz.answer_shown"
-private const val ANSWER_IS_TRUE = "com.example.geoquiz.answer_is_true"
+private const val CORRECT_ANSWER = "com.example.geoquiz.correct_answer"
 
 class CheatActivity : AppCompatActivity() {
-  private var answerIsTrue = false
+  private var correctAnswer = false
   private lateinit var answerButton: Button
   private lateinit var answerTextView: TextView
+  private var answerWasShown = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_cheat)
 
-    answerIsTrue = intent.getBooleanExtra(ANSWER_IS_TRUE, false)
+    correctAnswer   = intent.getBooleanExtra(CORRECT_ANSWER, false)
     answerButton    = findViewById(R.id.answer_button)
     answerTextView  = findViewById(R.id.answer_text_view)
 
+    answerWasShown = savedInstanceState?.getBoolean(ANSWER_SHOWN, false) ?: false
+    if (answerWasShown) {
+      setAnswerShownToTrue()
+    }
+
     answerButton.setOnClickListener {
-      answerTextView.setText(when(answerIsTrue) {
+      answerTextView.setText(when(correctAnswer) {
         true -> R.string.true_button
         else -> R.string.false_button
       })
-      setAnswerShownResult()
+      setAnswerShownToTrue()
     }
   }
 
-  private fun setAnswerShownResult () {
+  private fun setAnswerShownToTrue () {
     val data = Intent().apply {
       putExtra(ANSWER_SHOWN, true)
     }
     setResult(Activity.RESULT_OK, data)
+    answerWasShown = true
   }
 
   companion object {
-    fun newIntent(packageContext: Context, answerIsTrue: Boolean): Intent {
+    fun newIntent(packageContext: Context, correctAnswer: Boolean): Intent {
       return Intent(packageContext, CheatActivity::class.java).apply {
-        putExtra(ANSWER_IS_TRUE, answerIsTrue)
+        putExtra(CORRECT_ANSWER, correctAnswer)
       }
     }
+  }
+
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    outState.putBoolean(ANSWER_SHOWN, answerWasShown)
   }
 }

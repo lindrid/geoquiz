@@ -32,6 +32,13 @@
 
   </LinearLayout>
 
+  <TextView
+      android:id="@+id/api_version_text_view"
+      android:layout_width="128dp"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical|center_horizontal"
+      android:layout_marginTop="50dp" />
+
   <Button
       android:id="@+id/cheat_button"
       android:layout_width="wrap_content"
@@ -50,5 +57,10 @@
       android:drawableRight="@drawable/arrow_right"
       android:drawablePadding="4dp"/>
 
-
+  <TextView
+      android:id="@+id/cheats_left"
+      android:layout_width="128dp"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|center_horizontal"
+      android:layout_marginBottom="50dp" />
 </FrameLayout>
